@@ -1,7 +1,12 @@
 package cc.milione.me.mdict;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -21,7 +26,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +43,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        if (!isOnline(this)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("很抱歉")
+                    .setMessage("无法使用mDict，请连接至互联网。")
+                    .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .show()
+                    .setCancelable(false);
+        }
 
         editTextWord = (EditText) findViewById(R.id.editTextWord);
         tViewWord = (TextView) findViewById(R.id.textViewWord);
@@ -50,25 +68,38 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void searchOnClick(View view) {
-        String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
-        String wordExplain = postWeb(bingDictPath,wordVal);
-        if (wordExplain == null || wordExplain.equals("")) {
-            Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
+        if (!isOnline(this)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("很抱歉")
+                    .setMessage("无法使用mDict，请连接至互联网。")
+                    .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .show()
+                    .setCancelable(false);
         }
         else {
-            Log.i("mDict","post:" + wordExplain);
-            String mn1 = praseJson(wordExplain,"mn1");
-            if (mn1.equals("")||mn1.equals(" ")||mn1.equals(", ")||mn1.equals("; "))
-            {
+            String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
+            String wordExplain = postWeb(bingDictPath, wordVal);
+
+            if (wordExplain == null || wordExplain.equals("")) {
                 Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                tViewWord.setText(praseJson(wordExplain, "word"));
-                tViewBrep.setText(praseJson(wordExplain, "brep"));
-                tViewPos1.setText(praseJson(wordExplain, "pos1"));
-                tViewPos2.setText(praseJson(wordExplain, "pos2"));
-                tViewMn1.setText(praseJson(wordExplain, "mn1"));
-                tViewMn2.setText(praseJson(wordExplain, "mn2"));
+            } else {
+                Log.i("mDict", "post:" + wordExplain);
+                String mn1 = praseJson(wordExplain, "mn1");
+                if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
+                    Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
+                } else {
+                    tViewWord.setText(praseJson(wordExplain, "word"));
+                    tViewBrep.setText(praseJson(wordExplain, "brep"));
+                    tViewPos1.setText(praseJson(wordExplain, "pos1"));
+                    tViewPos2.setText(praseJson(wordExplain, "pos2"));
+                    tViewMn1.setText(praseJson(wordExplain, "mn1"));
+                    tViewMn2.setText(praseJson(wordExplain, "mn2"));
+                }
             }
         }
     }
@@ -130,5 +161,21 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return webStr;
+    }
+
+    public static boolean isOnline(Context context) {
+        ConnectivityManager connectivity = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivity != null) {
+            NetworkInfo info = connectivity.getActiveNetworkInfo();
+            if (info != null && info.isConnected())
+            {
+                if (info.getState() == NetworkInfo.State.CONNECTED)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
