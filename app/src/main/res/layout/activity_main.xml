@@ -45,4 +45,70 @@
         tools:ignore="SmallSp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/buttonSearch"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="5sp">
+
+        <TextView
+            android:id="@+id/textViewWord"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text=" "
+            android:textSize="24sp"
+            android:layout_marginLeft="3sp"
+            />
+
+        <TextView
+            android:id="@+id/textViewBrep"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3sp"
+            android:layout_marginBottom="20sp"
+            android:layout_weight="1"
+            android:text=" "
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textViewPos1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3sp"
+            android:layout_weight="1"
+            android:text=" "
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textVieMn1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3sp"
+            android:layout_weight="1"
+            android:text=" "
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textViewPos2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3sp"
+            android:layout_weight="1"
+            android:text=" "
+            android:textSize="14sp" />
+        <TextView
+            android:id="@+id/textVieMn2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="3sp"
+            android:layout_weight="1"
+            android:text=" "
+            android:textSize="20sp" />
+    </LinearLayout>
+
 </RelativeLayout>
