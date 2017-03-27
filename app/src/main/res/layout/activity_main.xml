@@ -34,4 +34,15 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:onClick="searchOnClick"/>
+
+    <TextView
+        android:id="@+id/textViewAboutBing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bingAbout"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="12sp"
+        tools:ignore="SmallSp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>

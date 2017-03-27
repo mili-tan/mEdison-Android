@@ -8,6 +8,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -32,9 +36,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void searchOnClick(View view) {
-        String wordVal = "Action=search&Word=" + editTextWord.getText().toString();
+        String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
         String wordExplain = postWeb(bingDictPath,wordVal);
-        Toast.makeText(this, wordExplain, Toast.LENGTH_SHORT).show();
+        if (wordExplain == null || wordExplain.equals(null) || wordExplain == "" || wordExplain.equals("")) {
+            Toast.makeText(this, "Error:Not Found Explain.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            Toast.makeText(this, wordExplain, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public String praseJson(String JsonStr, String JsonData) {
+        String getData = null;
+        try {
+            JSONArray jsonArray = new JSONArray(JsonStr);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject JSONObject = jsonArray.getJSONObject(i);
+                getData = JSONObject.getString(JsonData);
+                Log.d("MainActivity","Get:" + getData);
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+            getData = "Error";
+        }
+        return getData;
     }
 
     public String postWeb(String webPath, final String webVal){
