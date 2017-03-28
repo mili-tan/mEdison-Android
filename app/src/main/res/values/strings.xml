@@ -2,5 +2,5 @@
     <string name="app_name">mDict</string>
     <string name="search">查询</string>
     <string name="word">输入你想要查询的单词</string>
-    <string name="bingAbout">数据来源:Bing/Youdao</string>
+    <string name="bingAbout">数据来源 : Bing / Youdao</string>
 </resources>

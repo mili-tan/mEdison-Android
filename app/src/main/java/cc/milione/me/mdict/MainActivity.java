@@ -98,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
                     tViewMn1.setText(replaceJson(praseJson(wordExplain,"translation")));
                     tViewPos2.setText("其他");
                     tViewMn2.setText(replaceJson(replaceChn(praseJson(basic,"explains"))).trim());
-                    Toast.makeText(this, basic, Toast.LENGTH_SHORT).show();
                 }
             }
             else {
