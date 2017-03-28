@@ -27,6 +27,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -86,32 +88,43 @@ public class MainActivity extends AppCompatActivity {
             if (isChinese(editTextWord.getText().toString())) {
                 String wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(yoodaoDictPath, wordVal);
-                Toast.makeText(this, wordExplain, Toast.LENGTH_SHORT).show();
+                String basic = praseJson(wordExplain,"basic");
+                if (wordExplain == null || wordExplain.equals("") || !praseJson(wordExplain,"errorCode").equals("0")) {
+                    Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
+                } else {
+                    tViewEp.setText(replaceJson(praseJson(basic,"phonetic")));
+                    tViewWord.setText(praseJson(wordExplain,"query"));
+                    tViewPos1.setText("基本");
+                    tViewMn1.setText(replaceJson(praseJson(wordExplain,"translation")));
+                    tViewPos2.setText("其他");
+                    tViewMn2.setText(replaceJson(replaceChn(praseJson(basic,"explains"))).trim());
+                    Toast.makeText(this, basic, Toast.LENGTH_SHORT).show();
+                }
             }
             else {
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(bingDictPath, wordVal);
 
                 if (wordExplain == null || wordExplain.equals("")) {
-                    Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
                 } else {
-                    String mn1 = praseBingJson(wordExplain, "mn1");
+                    String mn1 = praseJson(wordExplain, "mn1");
                     if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
                         Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
                     } else {
-                        tViewWord.setText(praseBingJson(wordExplain, "word"));
-                        tViewEp.setText(praseBingJson(wordExplain, "brep"));
-                        tViewPos1.setText(praseBingJson(wordExplain, "pos1"));
-                        tViewPos2.setText(praseBingJson(wordExplain, "pos2"));
-                        tViewMn1.setText(praseBingJson(wordExplain, "mn1"));
-                        tViewMn2.setText(praseBingJson(wordExplain, "mn2"));
+                        tViewWord.setText(praseJson(wordExplain, "word"));
+                        tViewEp.setText(praseJson(wordExplain, "brep"));
+                        tViewPos1.setText(praseJson(wordExplain, "pos1"));
+                        tViewPos2.setText(praseJson(wordExplain, "pos2"));
+                        tViewMn1.setText(praseJson(wordExplain, "mn1"));
+                        tViewMn2.setText(praseJson(wordExplain, "mn2"));
                     }
                 }
             }
         }
     }
 
-    public String praseBingJson(String JsonStr, String JsonData) {
+    public String praseJson(String JsonStr, String JsonData) {
         String getData = null;
         try {
             JSONArray jsonArray = new JSONArray("["+JsonStr+"]");
@@ -168,6 +181,18 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         return webStr;
+    }
+
+    public String replaceJson(String replaceStr){
+        String strAfter = replaceStr.replace("[","").replace("]","").replace("\"","").replace(","," ; ");
+        return strAfter;
+    }
+
+    public String replaceChn(String replaceStr) {
+        String regEx = "[\\u4e00-\\u9fa5]";
+        Pattern p = Pattern.compile(regEx);
+        Matcher m = p.matcher(replaceStr);
+        return m.replaceAll("").replace("  "," ").trim();
     }
 
     public static boolean isOnline(Context context) {
