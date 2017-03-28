@@ -32,12 +32,13 @@ public class MainActivity extends AppCompatActivity {
 
     EditText editTextWord;
     TextView tViewWord;
-    TextView tViewBrep;
+    TextView tViewEp;
     TextView tViewPos1;
     TextView tViewPos2;
     TextView tViewMn1;
     TextView tViewMn2;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
+    String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         editTextWord = (EditText) findViewById(R.id.editTextWord);
         tViewWord = (TextView) findViewById(R.id.textViewWord);
-        tViewBrep = (TextView) findViewById(R.id.textViewBrep);
+        tViewEp = (TextView) findViewById(R.id.textViewEp);
         tViewPos1 = (TextView) findViewById(R.id.textViewPos1);
         tViewPos2 = (TextView) findViewById(R.id.textViewPos2);
         tViewMn1 = (TextView) findViewById(R.id.textVieMn1);
@@ -82,29 +83,35 @@ public class MainActivity extends AppCompatActivity {
                     .setCancelable(false);
         }
         else {
-            String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
-            String wordExplain = postWeb(bingDictPath, wordVal);
+            if (isChinese(editTextWord.getText().toString())) {
+                String wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
+                String wordExplain = postWeb(yoodaoDictPath, wordVal);
+                Toast.makeText(this, wordExplain, Toast.LENGTH_SHORT).show();
+            }
+            else {
+                String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
+                String wordExplain = postWeb(bingDictPath, wordVal);
 
-            if (wordExplain == null || wordExplain.equals("")) {
-                Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.i("mDict", "post:" + wordExplain);
-                String mn1 = praseJson(wordExplain, "mn1");
-                if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
+                if (wordExplain == null || wordExplain.equals("")) {
                     Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
                 } else {
-                    tViewWord.setText(praseJson(wordExplain, "word"));
-                    tViewBrep.setText(praseJson(wordExplain, "brep"));
-                    tViewPos1.setText(praseJson(wordExplain, "pos1"));
-                    tViewPos2.setText(praseJson(wordExplain, "pos2"));
-                    tViewMn1.setText(praseJson(wordExplain, "mn1"));
-                    tViewMn2.setText(praseJson(wordExplain, "mn2"));
+                    String mn1 = praseBingJson(wordExplain, "mn1");
+                    if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
+                        Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
+                    } else {
+                        tViewWord.setText(praseBingJson(wordExplain, "word"));
+                        tViewEp.setText(praseBingJson(wordExplain, "brep"));
+                        tViewPos1.setText(praseBingJson(wordExplain, "pos1"));
+                        tViewPos2.setText(praseBingJson(wordExplain, "pos2"));
+                        tViewMn1.setText(praseBingJson(wordExplain, "mn1"));
+                        tViewMn2.setText(praseBingJson(wordExplain, "mn2"));
+                    }
                 }
             }
         }
     }
 
-    public String praseJson(String JsonStr, String JsonData) {
+    public String praseBingJson(String JsonStr, String JsonData) {
         String getData = null;
         try {
             JSONArray jsonArray = new JSONArray("["+JsonStr+"]");
@@ -177,5 +184,16 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+    
+    public static boolean isChinese(String string){
+        int n = 0;
+        for(int i = 0; i < string.length(); i++) {
+            n = (int)string.charAt(i);
+            if(!(19968 <= n && n <40869)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
