@@ -83,24 +83,29 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .show()
                     .setCancelable(false);
-        }
-        else {
+        } else {
             if (isChinese(editTextWord.getText().toString())) {
                 String wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(yoodaoDictPath, wordVal);
-                String basic = praseJson(wordExplain,"basic");
-                if (wordExplain == null || wordExplain.equals("") || !praseJson(wordExplain,"errorCode").equals("0")) {
-                    Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
-                } else {
-                    tViewEp.setText(replaceJson(praseJson(basic,"phonetic")));
-                    tViewWord.setText(praseJson(wordExplain,"query"));
-                    tViewPos1.setText("基本");
-                    tViewMn1.setText(replaceJson(praseJson(wordExplain,"translation")));
-                    tViewPos2.setText("其他");
-                    tViewMn2.setText(replaceJson(replaceChn(praseJson(basic,"explains"))).trim());
+                try {
+                    Thread.sleep(1000);
+                    String basic = praseJson(wordExplain, "basic");
+                    if (wordExplain == null || wordExplain.equals("") || !praseJson(wordExplain, "errorCode").equals("0")) {
+                        Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
+                    } else {
+                        tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
+                        tViewWord.setText(praseJson(wordExplain, "query"));
+                        tViewPos1.setText("基本");
+                        tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
+                        if (praseJson(basic, "explains") != " ") {
+                            tViewPos2.setText("其他");
+                            tViewMn2.setText(replaceJson(replaceChn(praseJson(basic, "explains"))).trim());
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-            }
-            else {
+            } else {
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(bingDictPath, wordVal);
 
@@ -124,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String praseJson(String JsonStr, String JsonData) {
-        String getData = null;
+        String getData = " ";
         try {
             JSONArray jsonArray = new JSONArray("["+JsonStr+"]");
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -135,9 +140,11 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (JSONException e) {
             e.printStackTrace();
-            getData = "";
+            getData = " ";
         }
-        return getData;
+        finally {
+            return getData;
+        }
     }
 
     public String postWeb(String webPath, final String webVal){
@@ -178,13 +185,23 @@ public class MainActivity extends AppCompatActivity {
             }.execute(webPath).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
+            new AlertDialog.Builder(this)
+                    .setTitle("很抱歉")
+                    .setMessage("出现了一些意外故障，请尝试重新启动。")
+                    .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .show()
+                    .setCancelable(false);
         }
         return webStr;
     }
 
     public String replaceJson(String replaceStr){
-        String strAfter = replaceStr.replace("[","").replace("]","").replace("\"","").replace(","," ; ");
-        return strAfter;
+        return replaceStr.replace("[","").replace("]","").replace("\"","").replace(","," ; ");
     }
 
     public String replaceChn(String replaceStr) {
