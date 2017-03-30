@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                         tViewWord.setText(praseJson(wordExplain, "query"));
                         tViewPos1.setText("基本");
                         tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
-                        if (praseJson(basic, "explains") != " ") {
+                        if (!praseJson(basic, "explains").equals(" ")) {
                             tViewPos2.setText("其他");
                             tViewMn2.setText(replaceJson(replaceChn(praseJson(basic, "explains"))).trim());
                         }
