@@ -1,9 +1,7 @@
 package cc.milione.me.mdict;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -32,8 +30,6 @@ import java.net.URL;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static android.os.Process.killProcess;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -92,23 +88,22 @@ public class MainActivity extends AppCompatActivity {
             if (isChinese(editTextWord.getText().toString())) {
                 String wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(yoodaoDictPath, wordVal);
-                try {
-                    Thread.sleep(1000);
-                    String basic = praseJson(wordExplain, "basic");
-                    if (wordExplain == null || wordExplain.equals("") || !praseJson(wordExplain, "errorCode").equals("0")) {
-                        Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
-                    } else {
-                        tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
-                        tViewWord.setText(praseJson(wordExplain, "query"));
-                        tViewPos1.setText("基本");
-                        tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
-                        if (!praseJson(basic, "explains").equals(" ")) {
-                            tViewPos2.setText("其他");
-                            tViewMn2.setText(replaceJson(replaceChn(praseJson(basic, "explains"))).trim());
-                        }
+                String basic = praseJson(wordExplain, "basic");
+                if (wordExplain == null || wordExplain.equals("") || !praseJson(wordExplain, "errorCode").equals("0")) {
+                    Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
+                } else {
+                    tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
+                    tViewWord.setText(praseJson(wordExplain, "query"));
+                    tViewPos1.setText("基本");
+                    tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
+                    if (!praseJson(basic, "explains").equals(" ")) {
+                        tViewPos2.setText("其他");
+                        tViewMn2.setText(replaceJson(replaceChn(praseJson(basic, "explains"))).trim());
                     }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    else{
+                        tViewPos2.setText(" ");
+                        tViewMn2.setText(" ");
+                    }
                 }
             } else {
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
