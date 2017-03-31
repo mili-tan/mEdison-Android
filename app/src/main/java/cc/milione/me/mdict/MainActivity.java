@@ -110,7 +110,13 @@ public class MainActivity extends AppCompatActivity {
                 String wordExplain = postWeb(bingDictPath, wordVal);
 
                 if (wordExplain == null || wordExplain.equals("")) {
-                    Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
+                    wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
+                    wordExplain = postWeb(yoodaoDictPath, wordVal);
+                    String basic = praseJson(wordExplain, "basic");
+                    tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
+                    tViewWord.setText(praseJson(wordExplain, "query"));
+                    tViewPos1.setText("其他");
+                    tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
                 } else {
                     String mn1 = praseJson(wordExplain, "mn1");
                     if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
