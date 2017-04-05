@@ -2,8 +2,10 @@ package cc.milione.me.mdict;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -26,7 +28,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,10 +53,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        if (!isOnline(this)) {
+        if (!isOnline(this) || !inNetwork()) {
             new AlertDialog.Builder(this)
                     .setTitle("很抱歉")
                     .setMessage("无法使用mDict，请连接至互联网。")
+                    .setNegativeButton("网络设置", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
+                            startActivity(intent);
+                        }
+                    })
                     .setPositiveButton("退出", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -76,6 +88,13 @@ public class MainActivity extends AppCompatActivity {
             new AlertDialog.Builder(this)
                     .setTitle("很抱歉")
                     .setMessage("无法使用mDict，请连接至互联网。")
+                    .setNegativeButton("网络设置", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS);
+                            startActivity(intent);
+                        }
+                    })
                     .setPositiveButton("退出", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -206,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             new AlertDialog.Builder(this)
                     .setTitle("很抱歉")
-                    .setMessage("出现了一些意外故障，请尝试重新启动。")
+                    .setMessage("出现了一些意外的网络故障，请重试。")
                     .setPositiveButton("退出", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -242,6 +261,18 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
             }
+        }
+        return false;
+    }
+
+    public boolean inNetwork() {
+        Runtime runtime = Runtime.getRuntime();
+        try {
+            Process ipProcess = runtime.exec("ping -c 1 fanyi.youdao.com");
+            int exitValue = ipProcess.waitFor();
+            return (exitValue == 0);
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
         return false;
     }
