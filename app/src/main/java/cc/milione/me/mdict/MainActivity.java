@@ -41,8 +41,12 @@ public class MainActivity extends AppCompatActivity {
     TextView tViewEp;
     TextView tViewPos1;
     TextView tViewPos2;
+    TextView tViewPos3;
+    TextView tViewPos4;
     TextView tViewMn1;
     TextView tViewMn2;
+    TextView tViewMn3;
+    TextView tViewMn4;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
 
@@ -77,8 +81,12 @@ public class MainActivity extends AppCompatActivity {
         tViewEp = (TextView) findViewById(R.id.textViewEp);
         tViewPos1 = (TextView) findViewById(R.id.textViewPos1);
         tViewPos2 = (TextView) findViewById(R.id.textViewPos2);
+        tViewPos3 = (TextView) findViewById(R.id.textViewPos3);
+        tViewPos4 = (TextView) findViewById(R.id.textViewPos4);
         tViewMn1 = (TextView) findViewById(R.id.textVieMn1);
         tViewMn2 = (TextView) findViewById(R.id.textVieMn2);
+        tViewMn3 = (TextView) findViewById(R.id.textVieMn3);
+        tViewMn4 = (TextView) findViewById(R.id.textVieMn4);
     }
 
     public void searchOnClick(View view) {
@@ -140,11 +148,26 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
                     } else {
                         tViewWord.setText(praseJson(wordExplain, "word"));
+                        if (praseJson(wordExplain, "brep") == null || praseJson(wordExplain, "brep").equals("")){
+                            tViewEp.setText("| ω・´) ");
+                        }
+                        else{
                         tViewEp.setText(praseJson(wordExplain, "brep"));
+                        }
                         tViewPos1.setText(praseJson(wordExplain, "pos1"));
-                        tViewPos2.setText(praseJson(wordExplain, "pos2"));
                         tViewMn1.setText(praseJson(wordExplain, "mn1"));
-                        tViewMn2.setText(praseJson(wordExplain, "mn2"));
+                        if (praseJson(wordExplain, "mn2") != null || !praseJson(wordExplain, "mn2").equals("")) {
+                            tViewPos2.setText(praseJson(wordExplain, "pos2"));
+                            tViewMn2.setText(praseJson(wordExplain, "mn2"));
+                        }
+                        if (praseJson(wordExplain, "mn3") != null || !praseJson(wordExplain, "mn3").equals("")) {
+                            tViewPos3.setText(praseJson(wordExplain, "pos3"));
+                            tViewMn3.setText(praseJson(wordExplain, "mn3"));
+                        }
+                        if (praseJson(wordExplain, "mn4") != null || !praseJson(wordExplain, "mn4").equals("")) {
+                            tViewPos4.setText(praseJson(wordExplain, "pos4"));
+                            tViewMn4.setText(praseJson(wordExplain, "mn4"));
+                        }
                     }
                 }
             }
