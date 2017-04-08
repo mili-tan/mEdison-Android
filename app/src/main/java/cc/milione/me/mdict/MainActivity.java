@@ -129,6 +129,10 @@ public class MainActivity extends AppCompatActivity {
                         tViewPos2.setText(" ");
                         tViewMn2.setText(" ");
                     }
+                    tViewPos3.setText(" ");
+                    tViewMn3.setText(" ");
+                    tViewPos4.setText(" ");
+                    tViewMn4.setText(" ");
                 }
             } else {
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
@@ -142,6 +146,12 @@ public class MainActivity extends AppCompatActivity {
                     tViewWord.setText(praseJson(wordExplain, "query"));
                     tViewPos1.setText("其他");
                     tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
+                    tViewPos2.setText(" ");
+                    tViewMn2.setText(" ");
+                    tViewPos3.setText(" ");
+                    tViewMn3.setText(" ");
+                    tViewPos4.setText(" ");
+                    tViewMn4.setText(" ");
                 } else {
                     String mn1 = praseJson(wordExplain, "mn1");
                     if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
