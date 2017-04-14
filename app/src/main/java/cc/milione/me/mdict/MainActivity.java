@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tViewMn2;
     TextView tViewMn3;
     TextView tViewMn4;
+    Button buttonSearch;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
 
@@ -87,6 +91,18 @@ public class MainActivity extends AppCompatActivity {
         tViewMn2 = (TextView) findViewById(R.id.textVieMn2);
         tViewMn3 = (TextView) findViewById(R.id.textVieMn3);
         tViewMn4 = (TextView) findViewById(R.id.textVieMn4);
+        buttonSearch = (Button) findViewById(R.id.buttonSearch);
+
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+        if (Intent.ACTION_SEND.equals(action) && type != null) {
+            if (type.startsWith("text/")) {
+                handleSendText(intent);
+                buttonSearch.performClick();
+            }
+        }
     }
 
     public void searchOnClick(View view) {
@@ -124,8 +140,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!praseJson(basic, "explains").equals(" ")) {
                         tViewPos2.setText("其他");
                         tViewMn2.setText(replaceJson(replaceChn(praseJson(basic, "explains"))).trim());
-                    }
-                    else{
+                    } else {
                         tViewPos2.setText(" ");
                         tViewMn2.setText(" ");
                     }
@@ -158,11 +173,10 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
                     } else {
                         tViewWord.setText(praseJson(wordExplain, "word"));
-                        if (praseJson(wordExplain, "brep") == null || praseJson(wordExplain, "brep").equals("")){
+                        if (praseJson(wordExplain, "brep") == null || praseJson(wordExplain, "brep").equals("")) {
                             tViewEp.setText("| ω・´) ");
-                        }
-                        else{
-                        tViewEp.setText(praseJson(wordExplain, "brep"));
+                        } else {
+                            tViewEp.setText(praseJson(wordExplain, "brep"));
                         }
                         tViewPos1.setText(praseJson(wordExplain, "pos1"));
                         tViewMn1.setText(praseJson(wordExplain, "mn1"));
@@ -184,8 +198,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    private void handleSendText(Intent intent) {
+
+        String sharedText = intent.getStringExtra(Intent.EXTRA_TEXT);
+        if (sharedText != null) {
+            editTextWord.setText(sharedText);
+        }
+
+
+        Uri textUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        if (textUri != null) {
+            try {
+                InputStream inputStream = this.getContentResolver().openInputStream(textUri);
+                editTextWord.setText(inputStream2Byte(inputStream));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+        @Override
+        public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main,menu);
         return true;
     }
@@ -337,5 +370,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return true;
+    }
+
+    private String inputStream2Byte(InputStream inputStream) throws IOException{
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        byte [] buffer = new byte[1024];
+        int len = -1;
+
+        while((len = inputStream.read(buffer)) != -1){
+            bos.write(buffer, 0, len);
+        }
+
+        bos.close();
+
+        return new String(bos.toByteArray(), "UTF-8");
     }
 }
