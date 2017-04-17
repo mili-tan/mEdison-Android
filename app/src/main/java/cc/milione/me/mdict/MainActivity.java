@@ -1,6 +1,8 @@
 package cc.milione.me.mdict;
 
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -52,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tViewMn3;
     TextView tViewMn4;
     Button buttonSearch;
+    CardView wordCard;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
 
@@ -81,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
                     .setCancelable(false);
         }
 
+        wordCard = (CardView) findViewById(R.id.cardViewWord);
         editTextWord = (EditText) findViewById(R.id.editTextWord);
         tViewWord = (TextView) findViewById(R.id.textViewWord);
         tViewEp = (TextView) findViewById(R.id.textViewEp);
@@ -104,6 +109,20 @@ public class MainActivity extends AppCompatActivity {
                 buttonSearch.performClick();
             }
         }
+
+        wordCard.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+
+                ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clipData = ClipData.newPlainText("mDict", tViewWord.getText().toString() + "：" + tViewMn1.getText().toString() +" "+ tViewMn2.getText().toString());
+                Toast.makeText(MainActivity.this, "已帮您将释义复制到剪贴板", Toast.LENGTH_SHORT).show();
+                clipboardManager.setPrimaryClip(clipData);
+
+                return false;
+            }
+        });
+
     }
 
     public void searchOnClick(View view) {
