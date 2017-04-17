@@ -1,5 +1,6 @@
 package cc.milione.me.mdict;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -303,6 +304,7 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                     return line;
+
                 }
             }.execute(webPath).get();
         } catch (InterruptedException | ExecutionException e) {
