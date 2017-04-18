@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
                 } else {
                     tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
-                    if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("")) {
+                    if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("")|| praseJson(wordExplain, "phonetic").equals(" ")) {
                         tViewEp.setText("| ω・´) ");
                     }
                     tViewWord.setText(praseJson(wordExplain, "query"));
@@ -185,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
                     wordExplain = postWeb(yoodaoDictPath, wordVal);
                     String basic = praseJson(wordExplain, "basic");
                     tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
-                    if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("")) {
+                    if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("") || praseJson(wordExplain, "phonetic").equals(" ")) {
                         tViewEp.setText("| ω・´) ");
                     }
                     tViewWord.setText(praseJson(wordExplain, "query"));
@@ -205,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
                     } else {
                         tViewWord.setText(praseJson(wordExplain, "word"));
-                        if (praseJson(wordExplain, "brep") == null || praseJson(wordExplain, "brep").equals("")) {
+                        if (praseJson(wordExplain, "brep") == null || praseJson(wordExplain, "brep").equals("") || praseJson(wordExplain, "brep").equals(" ")) {
                             tViewEp.setText("| ω・´) ");
                         } else {
                             tViewEp.setText(praseJson(wordExplain, "brep"));
