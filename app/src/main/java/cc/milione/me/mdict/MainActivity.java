@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tViewMn4;
     Button buttonSearch;
     CardView wordCard;
+    CardView showCard;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
 
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     .setCancelable(false);
         }
 
+        showCard = (CardView) findViewById(R.id.cardViewShow);
         wordCard = (CardView) findViewById(R.id.cardViewWord);
         editTextWord = (EditText) findViewById(R.id.editTextWord);
         tViewWord = (TextView) findViewById(R.id.textViewWord);
@@ -154,6 +156,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
                 } else {
                     tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
+                    if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("")) {
+                        tViewEp.setText("| ω・´) ");
+                    }
                     tViewWord.setText(praseJson(wordExplain, "query"));
                     tViewPos1.setText("基本");
                     tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
@@ -168,6 +173,8 @@ public class MainActivity extends AppCompatActivity {
                     tViewMn3.setText(" ");
                     tViewPos4.setText(" ");
                     tViewMn4.setText(" ");
+                    showCard.setVisibility(view.VISIBLE);
+                    wordCard.setVisibility(view.VISIBLE);
                 }
             } else {
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
@@ -178,6 +185,9 @@ public class MainActivity extends AppCompatActivity {
                     wordExplain = postWeb(yoodaoDictPath, wordVal);
                     String basic = praseJson(wordExplain, "basic");
                     tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
+                    if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("")) {
+                        tViewEp.setText("| ω・´) ");
+                    }
                     tViewWord.setText(praseJson(wordExplain, "query"));
                     tViewPos1.setText("其他");
                     tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
@@ -187,6 +197,8 @@ public class MainActivity extends AppCompatActivity {
                     tViewMn3.setText(" ");
                     tViewPos4.setText(" ");
                     tViewMn4.setText(" ");
+                    showCard.setVisibility(view.VISIBLE);
+                    wordCard.setVisibility(view.VISIBLE);
                 } else {
                     String mn1 = praseJson(wordExplain, "mn1");
                     if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
@@ -212,6 +224,8 @@ public class MainActivity extends AppCompatActivity {
                             tViewPos4.setText(praseJson(wordExplain, "pos4"));
                             tViewMn4.setText(praseJson(wordExplain, "mn4"));
                         }
+                        showCard.setVisibility(view.VISIBLE);
+                        wordCard.setVisibility(view.VISIBLE);
                     }
                 }
             }
