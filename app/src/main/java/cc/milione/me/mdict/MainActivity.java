@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
     TextToSpeech TTS;
+    boolean dictType = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        showCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (dictType){
+                    TTS.speak(tViewWord.getText().toString(), TextToSpeech.QUEUE_ADD,
+                            null);
+                }
+                else{
+                    TTS.speak(tViewMn1.getText().toString(), TextToSpeech.QUEUE_ADD,
+                            null);
+                }
+            }
+        });
     }
 
     public void searchOnClick(View view) {
@@ -193,10 +207,12 @@ public class MainActivity extends AppCompatActivity {
                     tViewMn4.setText(" ");
                     showCard.setVisibility(view.VISIBLE);
                     wordCard.setVisibility(view.VISIBLE);
+                    dictType = false;
                 }
             } else {
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(bingDictPath, wordVal);
+                dictType = true;
 
                 if (wordExplain == null || wordExplain.equals("")) {
                     wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
@@ -438,5 +454,13 @@ public class MainActivity extends AppCompatActivity {
         bos.close();
 
         return new String(bos.toByteArray(), "UTF-8");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (TTS != null) {
+            TTS.shutdown();
+        }
     }
 }
