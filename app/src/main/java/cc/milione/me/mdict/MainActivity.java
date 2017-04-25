@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -37,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     CardView showCard;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
+    TextToSpeech TTS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +103,21 @@ public class MainActivity extends AppCompatActivity {
         tViewMn3 = (TextView) findViewById(R.id.textVieMn3);
         tViewMn4 = (TextView) findViewById(R.id.textVieMn4);
         buttonSearch = (Button) findViewById(R.id.buttonSearch);
+
+        TTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status == TextToSpeech.SUCCESS) {
+                    int result = TTS.setLanguage(Locale.US);
+                    // 如果不支持所设置的语言
+                    if (result != TextToSpeech.LANG_COUNTRY_AVAILABLE
+                            && result != TextToSpeech.LANG_AVAILABLE) {
+                        Toast.makeText(MainActivity.this,
+                                "TTS不支持很抱歉语言的朗读", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
 
         Intent intent = getIntent();
         String action = intent.getAction();
