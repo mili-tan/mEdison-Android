@@ -20,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -117,6 +118,16 @@ public class MainActivity extends AppCompatActivity {
                                 "TTS不支持很抱歉语言的朗读", Toast.LENGTH_LONG).show();
                     }
                 }
+            }
+        });
+
+        editTextWord.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO){
+                    buttonSearch.performClick();
+                }
+                return false;
             }
         });
 
