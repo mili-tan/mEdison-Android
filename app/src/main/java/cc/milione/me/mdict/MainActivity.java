@@ -1,6 +1,5 @@
 package cc.milione.me.mdict;
 
-import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -111,11 +110,10 @@ public class MainActivity extends AppCompatActivity {
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
                     int result = TTS.setLanguage(Locale.US);
-                    // 如果不支持所设置的语言
                     if (result != TextToSpeech.LANG_COUNTRY_AVAILABLE
                             && result != TextToSpeech.LANG_AVAILABLE) {
                         Toast.makeText(MainActivity.this,
-                                "TTS不支持很抱歉语言的朗读", Toast.LENGTH_LONG).show();
+                                "很抱歉 TTS不支持此语言的朗读", Toast.LENGTH_LONG).show();
                     }
                 }
             }
