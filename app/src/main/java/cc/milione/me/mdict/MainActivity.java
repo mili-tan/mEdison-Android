@@ -20,8 +20,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tViewMn2;
     TextView tViewMn3;
     TextView tViewMn4;
-    Button buttonSearch;
+    ImageButton buttonSearch;
     CardView wordCard;
     CardView showCard;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setElevation(0);
 
-        if (!isOnline(this) || !inNetwork()) {
+        if (!isOnline(this)) {
             new AlertDialog.Builder(this)
                     .setTitle("很抱歉")
                     .setMessage("无法使用mDict，请连接至互联网。")
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         tViewMn2 = (TextView) findViewById(R.id.textVieMn2);
         tViewMn3 = (TextView) findViewById(R.id.textVieMn3);
         tViewMn4 = (TextView) findViewById(R.id.textVieMn4);
-        buttonSearch = (Button) findViewById(R.id.buttonSearch);
+        buttonSearch = (ImageButton) findViewById(R.id.imageButtonSearch);
 
         TTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
             @Override
@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void searchOnClick(View view) {
+
         if (!isOnline(this)) {
             new AlertDialog.Builder(this)
                     .setTitle("很抱歉")
@@ -437,8 +438,8 @@ public class MainActivity extends AppCompatActivity {
             return (exitValue == 0);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
+            return false;
         }
-        return false;
     }
     
     public static boolean isChinese(String string){
