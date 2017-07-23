@@ -4,11 +4,11 @@ android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
-        applicationId "cc.milione.me.mdict"
+        applicationId "cc.milione.me.medison"
         minSdkVersion 14
         targetSdkVersion 25
         versionCode 1
-        versionName "Build03 Fix3.5"
+        versionName "Build5"
         testInstrumentationRunner "android.supp" +
                 "" +
                 "" +
