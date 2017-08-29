@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
     TextToSpeech TTS;
     boolean dictType = false;
+    AlertDialog waitDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +173,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void searchOnClick(View view) {
 
+        waitDialog = new AlertDialog.Builder(
+                this).setTitle("请稍等……").setMessage("正在查询，请稍等").show();
+
         if (!isOnline(this)) {
+            waitDialog.dismiss();
             new AlertDialog.Builder(this)
                     .setTitle("很抱歉")
                     .setMessage("无法使用mDict，请连接至互联网。")
@@ -188,8 +193,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             System.exit(0);
                         }
-                    })
-                    .show()
+    })
+            .show()
                     .setCancelable(false);
         } else {
             if (isChinese(editTextWord.getText().toString())) {
@@ -198,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
                 String basic = praseJson(wordExplain, "basic");
                 if (wordExplain == null || wordExplain.equals("") || !praseJson(wordExplain, "errorCode").equals("0")) {
                     Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
+                    waitDialog.dismiss();
                 } else {
                     tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
                     if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("")|| praseJson(wordExplain, "phonetic").equals(" ")) {
@@ -220,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                     showCard.setVisibility(view.VISIBLE);
                     wordCard.setVisibility(view.VISIBLE);
                     dictType = false;
+                    waitDialog.dismiss();
                 }
             } else {
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
@@ -245,10 +252,12 @@ public class MainActivity extends AppCompatActivity {
                     tViewMn4.setText(" ");
                     showCard.setVisibility(view.VISIBLE);
                     wordCard.setVisibility(view.VISIBLE);
+                    waitDialog.dismiss();
                 } else {
                     String mn1 = praseJson(wordExplain, "mn1");
                     if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
                         Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
+                        waitDialog.dismiss();
                     } else {
                         tViewWord.setText(praseJson(wordExplain, "word"));
                         if (praseJson(wordExplain, "brep") == null || praseJson(wordExplain, "brep").equals("") || praseJson(wordExplain, "brep").equals(" ")) {
@@ -272,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         showCard.setVisibility(view.VISIBLE);
                         wordCard.setVisibility(view.VISIBLE);
+                        waitDialog.dismiss();
                     }
                 }
             }
@@ -350,6 +360,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public String postWeb(String webPath, final String webVal){
+
         String webStr = "";
         try {
             webStr = new AsyncTask<String, Void, String>() {

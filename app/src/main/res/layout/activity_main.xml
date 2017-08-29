@@ -61,7 +61,6 @@
                     android:layout_marginRight="3dp"
                     android:background="@null"
                     android:clickable="true"
-                    android:foreground="?android:attr/selectableItemBackground"
                     android:gravity="center_horizontal"
                     android:onClick="searchOnClick"
                     android:padding="5dp"
