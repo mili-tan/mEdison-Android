@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -56,14 +57,15 @@ public class MainActivity extends AppCompatActivity {
     TextView tViewMn2;
     TextView tViewMn3;
     TextView tViewMn4;
+    TextView tViewAbout;
     ImageButton buttonSearch;
     CardView wordCard;
     CardView showCard;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
     TextToSpeech TTS;
+    String dict = "bing";
     boolean dictType = false;
-    AlertDialog waitDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
         tViewMn2 = (TextView) findViewById(R.id.textVieMn2);
         tViewMn3 = (TextView) findViewById(R.id.textVieMn3);
         tViewMn4 = (TextView) findViewById(R.id.textVieMn4);
+        tViewAbout = (TextView) findViewById(R.id.textViewAbout);
         buttonSearch = (ImageButton) findViewById(R.id.imageButtonSearch);
 
         TTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
@@ -173,11 +176,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void searchOnClick(View view) {
 
-        waitDialog = new AlertDialog.Builder(
-                this).setTitle("请稍等……").setMessage("正在查询，请稍等").show();
+        dictType = !isChinese(editTextWord.getText().toString());
 
         if (!isOnline(this)) {
-            waitDialog.dismiss();
             new AlertDialog.Builder(this)
                     .setTitle("很抱歉")
                     .setMessage("无法使用mDict，请连接至互联网。")
@@ -197,13 +198,12 @@ public class MainActivity extends AppCompatActivity {
             .show()
                     .setCancelable(false);
         } else {
-            if (isChinese(editTextWord.getText().toString())) {
+            if (dict == "youdao") {
                 String wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(yoodaoDictPath, wordVal);
                 String basic = praseJson(wordExplain, "basic");
                 if (wordExplain == null || wordExplain.equals("") || !praseJson(wordExplain, "errorCode").equals("0")) {
                     Toast.makeText(this, "mDict查询失败，请检查", Toast.LENGTH_SHORT).show();
-                    waitDialog.dismiss();
                 } else {
                     tViewEp.setText(replaceJson(praseJson(basic, "phonetic")));
                     if (praseJson(wordExplain, "phonetic") == null || praseJson(wordExplain, "phonetic").equals("")|| praseJson(wordExplain, "phonetic").equals(" ")) {
@@ -212,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
                     tViewWord.setText(praseJson(wordExplain, "query"));
                     tViewPos1.setText("基本");
                     tViewMn1.setText(replaceJson(praseJson(wordExplain, "translation")));
-                    if (!praseJson(basic, "explains").equals(" ")) {
+                    if (!praseJson(basic, "explains").equals(" ") && isChinese(tViewWord.getText().toString())) {
                         tViewPos2.setText("其他");
                         tViewMn2.setText(replaceJson(replaceChn(praseJson(basic, "explains"))).trim());
                     } else {
@@ -225,13 +225,10 @@ public class MainActivity extends AppCompatActivity {
                     tViewMn4.setText(" ");
                     showCard.setVisibility(view.VISIBLE);
                     wordCard.setVisibility(view.VISIBLE);
-                    dictType = false;
-                    waitDialog.dismiss();
                 }
-            } else {
+            } else if(dict == "bing"){
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(bingDictPath, wordVal);
-                dictType = true;
 
                 if (wordExplain == null || wordExplain.equals("")) {
                     wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
@@ -252,12 +249,10 @@ public class MainActivity extends AppCompatActivity {
                     tViewMn4.setText(" ");
                     showCard.setVisibility(view.VISIBLE);
                     wordCard.setVisibility(view.VISIBLE);
-                    waitDialog.dismiss();
                 } else {
                     String mn1 = praseJson(wordExplain, "mn1");
                     if (mn1.equals("") || mn1.equals(" ") || mn1.equals(", ") || mn1.equals("; ")) {
                         Toast.makeText(this, "mDict未查询到相关内容，请检查", Toast.LENGTH_SHORT).show();
-                        waitDialog.dismiss();
                     } else {
                         tViewWord.setText(praseJson(wordExplain, "word"));
                         if (praseJson(wordExplain, "brep") == null || praseJson(wordExplain, "brep").equals("") || praseJson(wordExplain, "brep").equals(" ")) {
@@ -281,9 +276,10 @@ public class MainActivity extends AppCompatActivity {
                         }
                         showCard.setVisibility(view.VISIBLE);
                         wordCard.setVisibility(view.VISIBLE);
-                        waitDialog.dismiss();
                     }
                 }
+            }else if(dict == "shanbay"){
+                Toast.makeText(this, "Testing", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -319,6 +315,31 @@ public class MainActivity extends AppCompatActivity {
             case R.id.about:
                 Toast.makeText(this, "一个简单的词典软件", Toast.LENGTH_SHORT).show();
                 break;
+            case  R.id.choose:
+                new AlertDialog.Builder(this).setTitle("选择词典").setSingleChoiceItems(new String[] {"youdao","bing","shanbay"},0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == 0)
+                        {
+                            Toast.makeText(MainActivity.this, "已切换为有道", Toast.LENGTH_SHORT).show();
+                            dict = "youdao";
+                            tViewAbout.setText("数据来源 : Youdao");
+                        }
+                        if (which == 1)
+                        {
+                            Toast.makeText(MainActivity.this, "已切换为必应", Toast.LENGTH_SHORT).show();
+                            dict = "bing";
+                            tViewAbout.setText("数据来源 : Bing");
+                        }
+                        if (which == 2)
+                        {
+                            Toast.makeText(MainActivity.this, "已切换为扇贝g", Toast.LENGTH_SHORT).show();
+                            dict = "shanbay";
+                            tViewAbout.setText("数据来源 : Shanbay");
+                        }
+                    }
+                }).show();
+                break;
             case R.id.exit:
                 finish();
                 break;
@@ -326,6 +347,8 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
+
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -251,7 +251,7 @@
         android:orientation="vertical" />
 
     <TextView
-        android:id="@+id/textViewAboutBing"
+        android:id="@+id/textViewAbout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -259,7 +259,7 @@
         android:layout_margin="10dp"
         android:layout_marginBottom="2dp"
         android:gravity="center"
-        android:text="@string/bingAbout"
+        android:text="数据来源 : bing"
         android:textColor="@android:color/darker_gray"
         tools:ignore="SmallSp" />
 

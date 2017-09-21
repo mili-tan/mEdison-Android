@@ -3,6 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/choose"
+        android:title="选择词典" />
+    <item
         android:id="@+id/about"
         android:title="关于" />
     <item
