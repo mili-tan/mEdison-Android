@@ -1,5 +1,6 @@
 package cc.milione.me.mdict;
 
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -316,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "一个简单的词典软件", Toast.LENGTH_SHORT).show();
                 break;
             case  R.id.choose:
-                new AlertDialog.Builder(this).setTitle("选择词典").setSingleChoiceItems(new String[] {"youdao","bing","shanbay"},0, new DialogInterface.OnClickListener() {
+                Dialog chooseDlg = new AlertDialog.Builder(this).setTitle("选择词典").setSingleChoiceItems(new String[] {"youdao","bing","shanbay"},0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0)
@@ -337,6 +338,7 @@ public class MainActivity extends AppCompatActivity {
                             dict = "shanbay";
                             tViewAbout.setText("数据来源 : Shanbay");
                         }
+                        dialog.dismiss();
                     }
                 }).show();
                 break;
