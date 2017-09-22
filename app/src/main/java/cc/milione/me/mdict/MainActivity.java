@@ -65,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
     TextToSpeech TTS;
-    String dict = "bing";
-    boolean dictType = false;
+    int dictKey = 1;
+    boolean speechType = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         showCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (dictType){
+                if (speechType){
                     TTS.speak(tViewWord.getText().toString(), TextToSpeech.QUEUE_ADD,
                             null);
                 }
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void searchOnClick(View view) {
 
-        dictType = !isChinese(editTextWord.getText().toString());
+        speechType = !isChinese(editTextWord.getText().toString());
 
         if (!isOnline(this)) {
             new AlertDialog.Builder(this)
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity {
             .show()
                     .setCancelable(false);
         } else {
-            if (dict == "youdao") {
+            if (dictKey == 0) {
                 String wordVal = "keyfrom=mdict-milione&key=900659837&type=data&doctype=json&version=1.1&q=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(yoodaoDictPath, wordVal);
                 String basic = praseJson(wordExplain, "basic");
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                     showCard.setVisibility(view.VISIBLE);
                     wordCard.setVisibility(view.VISIBLE);
                 }
-            } else if(dict == "bing"){
+            } else if(dictKey == 1){
                 String wordVal = "Action=search&Format=jsonwv&Word=" + editTextWord.getText().toString();
                 String wordExplain = postWeb(bingDictPath, wordVal);
 
@@ -279,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
                         wordCard.setVisibility(view.VISIBLE);
                     }
                 }
-            }else if(dict == "shanbay"){
+            }else if(dictKey == 2){
                 Toast.makeText(this, "Testing", Toast.LENGTH_SHORT).show();
             }
         }
@@ -317,25 +317,25 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "一个简单的词典软件", Toast.LENGTH_SHORT).show();
                 break;
             case  R.id.choose:
-                Dialog chooseDlg = new AlertDialog.Builder(this).setTitle("选择词典").setSingleChoiceItems(new String[] {"youdao","bing","shanbay"},0, new DialogInterface.OnClickListener() {
+                 new AlertDialog.Builder(this).setTitle("选择词典").setSingleChoiceItems(new String[] {"youdao","bing","shanbay"},dictKey, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (which == 0)
                         {
                             Toast.makeText(MainActivity.this, "已切换为有道", Toast.LENGTH_SHORT).show();
-                            dict = "youdao";
+                            dictKey = 0;
                             tViewAbout.setText("数据来源 : Youdao");
                         }
                         if (which == 1)
                         {
                             Toast.makeText(MainActivity.this, "已切换为必应", Toast.LENGTH_SHORT).show();
-                            dict = "bing";
+                            dictKey = 1;
                             tViewAbout.setText("数据来源 : Bing");
                         }
                         if (which == 2)
                         {
-                            Toast.makeText(MainActivity.this, "已切换为扇贝g", Toast.LENGTH_SHORT).show();
-                            dict = "shanbay";
+                            Toast.makeText(MainActivity.this, "已切换为扇贝", Toast.LENGTH_SHORT).show();
+                            dictKey = 2;;
                             tViewAbout.setText("数据来源 : Shanbay");
                         }
                         dialog.dismiss();
