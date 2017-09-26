@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     CardView showCard;
     String bingDictPath = "http://xtk.azurewebsites.net/BingService.aspx";
     String yoodaoDictPath = "http://fanyi.youdao.com/openapi.do";
+    String shanbayPath = "https://api.shanbay.com/bdc/search/";
     TextToSpeech TTS;
     int dictKey = 1;
     boolean speechType = false;
@@ -280,7 +281,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }else if(dictKey == 2){
-                Toast.makeText(this, "Testing", Toast.LENGTH_SHORT).show();
+                String wordVal = "word=" + editTextWord.getText().toString();
+                String wordExplain = postWeb(bingDictPath, wordVal);
+                String wordData = praseJson(wordExplain, "data");
+                String pronunciations = praseJson(wordData, "pronunciations");
+                tViewEp.setText(replaceJson(praseJson(pronunciations, "us")));
+
+                showCard.setVisibility(view.VISIBLE);
+                wordCard.setVisibility(view.VISIBLE);
             }
         }
     }
