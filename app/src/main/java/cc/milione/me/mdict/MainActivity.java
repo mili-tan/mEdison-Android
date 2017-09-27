@@ -282,7 +282,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }else if(dictKey == 2){
                 String wordVal = "word=" + editTextWord.getText().toString();
-                String wordExplain = postWeb(bingDictPath, wordVal);
+                String wordExplain = getWeb(bingDictPath, wordVal);
+                Toast.makeText(this, wordExplain, Toast.LENGTH_SHORT).show();
                 String wordData = praseJson(wordExplain, "data");
                 String pronunciations = praseJson(wordData, "pronunciations");
                 tViewEp.setText(replaceJson(praseJson(pronunciations, "us")));
@@ -445,6 +446,58 @@ public class MainActivity extends AppCompatActivity {
                     .setCancelable(false);
         }
         return webStr;
+    }
+
+    public String getWeb(String webPath, final String webVal){
+
+
+        String webStr = "";
+        try {
+            webStr = new AsyncTask<String, Void, String>() {
+                @Override
+                protected String doInBackground(String... params) {
+                    String line = null;
+
+                    try{
+                        URL url = new URL(params[0]);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setDoOutput(true);
+                        connection.setRequestMethod("GET");
+
+                        InputStream inputStream = connection.getInputStream();
+                        InputStreamReader inputStreamReader = new InputStreamReader(inputStream,"utf-8");
+                        BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                        String linestr;
+                        while ((linestr = bufferedReader.readLine()) != null){
+                            Log.d("mDict","Json:" + linestr);
+                            line = linestr;
+                        }
+                        bufferedReader.close();
+                        inputStreamReader.close();
+                        inputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    return line;
+
+                }
+            }.execute(webPath+"?"+webVal).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+            new AlertDialog.Builder(this)
+                    .setTitle("很抱歉")
+                    .setMessage("出现了一些意外的网络故障，请重试。")
+                    .setPositiveButton("退出", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .show()
+                    .setCancelable(false);
+        }
+        return webStr;
+
     }
 
     public String replaceJson(String replaceStr){
